@@ -1,6 +1,7 @@
 from app import app
-from flask import render_template
+from flask import render_template,session,request
 from utils.helpers import send_email, hash_md5,generate_otp,send_email
+from model import db
 
 @app.route('/',methods=['GET', 'POST'])
 def index():
