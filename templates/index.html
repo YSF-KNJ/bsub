@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="container">
+    <div class="home">
+        <h1>Welcome to Rent Car Agency</h1>
+        <p>Get the best deals on rental cars for your next trip.</p>
+
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+
+	{% if congrats%}
+        <p class="congrats">{{ congrats }}</p>
+        {% endif %}
+
+
+        <form action="/" method="POST">
+            <div class="form-group">
+                <label for="email">email:</label>
+                <input type="text" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <div class="button-container">
+                <input type="submit" value="Sign In" class="button">
+            </div>
+        </form>
+	<p>Forget Passowrd? <a href="/forgotpassword">Rest Password</a></p>
+        <p>Don't have an account? <a href="/sign-up">Sign Up</a></p>
+    </div>
+</div>
+{% endblock %}

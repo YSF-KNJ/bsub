@@ -137,11 +137,18 @@ def get_videos(creator_id):
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM video WHERE creator_id = ?', (creator_id,))
     videos = cursor.fetchall()
-    listt = [x for x in videos]
     conn.commit()
     cursor.close()
     conn.close()
-    return listt
+    return videos
+
+def change_password(email,new_password):
+    connection = sqlite3.connect('bsub.db')
+    cursor = connection.cursor()
+    cursor.execute("UPDATE creator SET password = ? WHERE creator_email = ?",(new_password,email))
+    connection.commit()
+    cursor.close()
+    connection.close()
     
 
 
