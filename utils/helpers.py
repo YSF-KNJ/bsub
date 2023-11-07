@@ -39,7 +39,7 @@ def hash_md5(password):
 
 def generate_otp():
     from random import randint
-    return randint(100000,999999)
+    return f"{randint(0, 999999):06d}"
 
 def send_email(subject, sender, recipients, body):
     from flask_mail import Mail, Message
