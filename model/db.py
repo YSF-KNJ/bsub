@@ -67,11 +67,7 @@ def is_deleted(video_id):
     result = cursor.fetchone()[0]
     cursor.close()
     conn.close()
-
-    if result == 'added':
-        return True
-    else:
-        return False
+    return result == 'added'
 
 def delete_video(video_id):
     if is_deleted(video_id):
@@ -82,8 +78,7 @@ def add_creator(creator_name,creator_email,password,whatsapp_number):
     INSERT INTO creator (creator_name, creator_email, whatsapp_number, solde, password)
     VALUES (?, ?, ?, ?, ?)''',
     (creator_name, creator_email, whatsapp_number, 0, password))
-    conn.commit()
-
+    
 def get_pass(email):
     connection = sqlite3.connect('bsub.db')
     cursor = connection.cursor()
