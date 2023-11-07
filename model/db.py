@@ -2,11 +2,16 @@ import sqlite3
 from utils import helpers
 from datetime import datetime
 
+def execute_query(query, args=()):
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    cursor.execute(query, args)
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 def create_tables():
-    conn = sqlite3.connect('bsub.db')
-    cursor = conn.cursor()
-    cursor.execute('''
+    execute_query('''
         CREATE TABLE IF NOT EXISTS creator (
             creator_id INTEGER PRIMARY KEY AUTOINCREMENT,
             creator_name TEXT,
@@ -14,8 +19,7 @@ def create_tables():
             whatsapp_number TEXT,
             solde REAL,
             password TEXT)''')
-
-    cursor.execute('''
+    execute_query('''
         CREATE TABLE IF NOT EXISTS video (
             video_id INTEGER PRIMARY KEY AUTOINCREMENT,
             ytp_id TEXT,
@@ -27,9 +31,6 @@ def create_tables():
             creator_id INTEGER,
             translation_file TEXT,
             FOREIGN KEY (creator_id) REFERENCES creator(creator_id))''')
-    conn.commit()
-    cursor.close()
-    conn.close()
 
 def get_solde(creator_id):
     conn = sqlite3.connect('bsub.db')
@@ -46,10 +47,7 @@ def is_added(price,creator_id):
     else:
         return False
 
-def add_video(url,creator_id):
-    conn = sqlite3.connect('bsub.db')
-    cursor = conn.cursor()
-    
+def add_video(url,creator_id):    
     ytp_id = helpers.video_id(url)
     thumbnail_url = helpers.video_thumbnail(url)
     video_length = helpers.video_length(url)
@@ -57,15 +55,10 @@ def add_video(url,creator_id):
     video_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     video_status = "added"
 
-    cursor.execute('''
+    execute_query('''
     INSERT INTO video (ytp_id, thumbnail_url, video_length, video_price, video_date, video_status, creator_id)
     VALUES (?, ?, ?, ?, ?, ?, ?)''',
     (ytp_id, thumbnail_url, video_length, video_price, video_date, video_status, creator_id))
-
-    conn.commit()
-    cursor.close()
-    conn.close()
-
 
 def is_deleted(video_id):
     conn = sqlite3.connect('bsub.db')
@@ -82,23 +75,14 @@ def is_deleted(video_id):
 
 def delete_video(video_id):
     if is_deleted(video_id):
-        conn = sqlite3.connect('bsub.db')
-        cursor = conn.cursor()
-        cursor.execute('DELETE FROM video WHERE video_id = ?', (video_id,))
-        conn.commit()
-        cursor.close()
-        conn.close()
+        execute_query('DELETE FROM video WHERE video_id = ?', (video_id,))
 
 def add_creator(creator_name,creator_email,password,whatsapp_number):
-    conn = sqlite3.connect('bsub.db')
-    cursor = conn.cursor()
-    cursor.execute('''
+    execute_query('''
     INSERT INTO creator (creator_name, creator_email, whatsapp_number, solde, password)
     VALUES (?, ?, ?, ?, ?)''',
     (creator_name, creator_email, whatsapp_number, 0, password))
     conn.commit()
-    cursor.close()
-    conn.close()
 
 def get_pass(email):
     connection = sqlite3.connect('bsub.db')
@@ -120,16 +104,6 @@ def get_id(email):
     cursor.close()
     connection.close()
     return id[0]
-    
-def get_mails():
-    connection = sqlite3.connect('bsub.db')
-    cursor = connection.cursor()
-    cursor.execute('SELECT creator_email FROM creator')
-    mails = cursor.fetchall()
-    cursor.close()
-    connection.close()
-    listt = [i[0] for i in mails]
-    return list(map(helpers.hash_md5, listt))
 
 def get_videos(creator_id):
     conn = sqlite3.connect('bsub.db')
@@ -142,13 +116,4 @@ def get_videos(creator_id):
     return videos
 
 def change_password(email,new_password):
-    connection = sqlite3.connect('bsub.db')
-    cursor = connection.cursor()
-    cursor.execute("UPDATE creator SET password = ? WHERE creator_email = ?",(new_password,email))
-    connection.commit()
-    cursor.close()
-    connection.close()
-    
-
-
-    
+    execute_query("UPDATE creator SET password = ? WHERE creator_email = ?",(new_password,email))
