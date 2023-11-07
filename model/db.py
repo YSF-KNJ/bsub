@@ -27,7 +27,6 @@ def create_tables():
             creator_id INTEGER,
             translation_file TEXT,
             FOREIGN KEY (creator_id) REFERENCES creator(creator_id))''')
-    add_creator('youssef','ysf.knj@gmail.com','12345678','0762978095')
     conn.commit()
     cursor.close()
     conn.close()
